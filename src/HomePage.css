@@ -1,0 +1,247 @@
+/* General Styling */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f8f8f8;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background-color: white;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  flex-wrap: wrap; /* Allows wrapping on smaller screens */
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links li {
+  cursor: pointer;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap; /* Ensures buttons wrap on smaller screens */
+}
+
+.nav-btn {
+  background: none;
+  border: 1px solid transparent;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  border-bottom: 2px solid orange;
+}
+
+.login-btn {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  background: url("plumb.jpg") no-repeat center center/cover;
+  padding: 60px 20px;
+  color: white;
+}
+
+.search-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap; /* Ensures inputs stack on smaller screens */
+}
+
+.search-container input {
+  padding: 10px;
+  width: 200px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.search-btn {
+  background-color: orange;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Promotions */
+.promotions {
+  padding: 30px;
+  text-align: center;
+}
+
+.promo-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap; /* Ensures cards stack on smaller screens */
+}
+
+.promo-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 200px;
+}
+
+.promo-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.promo-card button {
+  background-color: rgb(240, 147, 8);
+  color: white;
+  padding: 8px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+
+/* Logo */
+.logo-img {
+  width: 50px;
+  height: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-buttons {
+    justify-content: flex-start; /* Align buttons to the left */
+    width: 100%; /* Take full width */
+  }
+
+  .nav-btn,
+  .login-btn {
+    width: auto; /* Ensure buttons don't stretch */
+    margin-bottom: 10px; /* Add spacing between buttons */
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .search-container input {
+    width: 100%; /* Inputs take full width on smaller screens */
+  }
+
+  .promo-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .promo-card {
+    width: 90%; /* Cards take up most of the screen width */
+  }
+}
+/* How It Works Section */
+/* How It Works Section */
+.how-it-works {
+  background-color: #ffffff; /* White background */
+  padding: 60px 20px; /* Spacing around the section */
+  text-align: center;
+}
+
+.how-it-works h2 {
+  margin-bottom: 40px; /* Space below the heading */
+  font-size: 32px; /* Larger font size for the heading */
+  font-weight: bold;
+  color: #111827; /* Darker text color */
+}
+
+/* Steps Container */
+.steps {
+  display: flex;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto;
+  flex-wrap: wrap; /* Stack steps on smaller screens */
+  gap: 20px; /* Space between steps */
+}
+
+/* Individual Step */
+.step {
+  flex: 1;
+  padding: 20px;
+  background-color: #f9f9f9; /* Light gray background */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  text-align: center;
+  max-width: 300px; /* Limit the width of each step */
+  margin: 0 auto; /* Center steps on smaller screens */
+}
+
+.step-number {
+  background-color: #4c6ef5; /* Blue background for step numbers */
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 auto 15px; /* Center the number and add spacing below */
+}
+
+.step h3 {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333; /* Darker text color */
+}
+
+.step p {
+  color: #6c757d; /* Subtle gray text for descriptions */
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Responsive Design for How It Works */
+@media (max-width: 768px) {
+  .steps {
+    flex-direction: column; /* Stack steps vertically on smaller screens */
+    gap: 30px; /* Add spacing between stacked steps */
+  }
+
+  .step {
+    max-width: 100%; /* Allow steps to take full width on smaller screens */
+  }
+}

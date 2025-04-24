@@ -1,0 +1,79 @@
+.house-cleaning-page {
+    font-family: 'Arial', sans-serif;
+    background-color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .hero-section {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+  }
+  
+  .hero-image {
+    width: 100%;
+    object-fit: cover;
+    height: 300px;
+  }
+  
+  .content-section {
+    padding: 2rem;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+  }
+  
+  .warning {
+    font-weight: bold;
+    margin: 1rem 0;
+    font-size: 1rem;
+  }
+  
+  .warning.error {
+    color: red;
+  }
+  
+  .warning.success {
+    color: green;
+  }
+  
+  .reviews {
+    color: #333;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+  }
+  
+  .cleaning-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  
+  .cleaning-form input,
+  .cleaning-form select {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+  }
+  
+  .cleaning-form button {
+    grid-column: span 3;
+    padding: 0.75rem;
+    font-size: 1rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .cleaning-form button:hover {
+    background-color: #45a049;
+  }
+  

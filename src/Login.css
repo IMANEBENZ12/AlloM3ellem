@@ -1,0 +1,233 @@
+/* Login Container */
+.login-container {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f9fafb;
+    padding: 40px;
+  }
+  
+  .login-form-container {
+    width: 100%;
+    max-width: 480px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    padding: 50px 40px;
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .login-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+  }
+  
+  /* Error Message */
+  .error-message {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+    text-align: center;
+  }
+  
+  /* Form Styles */
+  .login-form {
+    width: 100%;
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+  
+  .form-input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .form-action {
+    margin-top: 24px;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 14px 16px;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .submit-button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+  }
+  
+  .submit-button:active {
+    transform: translateY(1px);
+  }
+  
+  .submit-button:disabled {
+    background-color: #93c5fd;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  /* Divider */
+  .divider {
+    position: relative;
+    margin: 24px 0;
+    text-align: center;
+  }
+  
+  .divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background-color: #e5e7eb;
+  }
+  
+  .divider span {
+    position: relative;
+    padding: 0 12px;
+    background-color: white;
+    color: #6b7280;
+    font-size: 0.875rem;
+  }
+  
+  /* Social Login */
+  .social-login {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  
+  .social-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .social-button:hover {
+    background-color: #f9fafb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .social-button:active {
+    transform: translateY(0);
+  }
+  
+  .social-icon {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .social-icon.facebook {
+    color: #1877f2;
+  }
+  
+  .social-icon.google {
+    color: #ea4335;
+  }
+  
+  .social-icon.apple {
+    color: #000000;
+  }
+  
+  /* Form Toggle */
+  .form-toggle {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+  
+  .toggle-button {
+    border: none;
+    background: none;
+    color: #2563eb;
+    cursor: pointer;
+    font-weight: 500;
+    padding: 4px;
+    margin-left: 4px;
+  }
+  
+  .toggle-button:hover {
+    text-decoration: underline;
+  }
+  
+  /* Home Link */
+  .home-link {
+    text-align: center;
+    margin-top: 16px;
+  }
+  
+  .back-button {
+    border: none;
+    background: none;
+    color: #6b7280;
+    cursor: pointer;
+    font-size: 0.875rem;
+    padding: 4px;
+  }
+  
+  .back-button:hover {
+    color: #111827;
+    text-decoration: none;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 640px) {
+    .login-form-container {
+      padding: 30px 20px;
+    }
+  }
