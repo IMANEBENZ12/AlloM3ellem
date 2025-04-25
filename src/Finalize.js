@@ -30,7 +30,7 @@ const Finalize = () => {
   // Booking details (would normally come from API/previous step)
   const bookingDetails = {
     service: 'Electrical Service',
-    dateTime: 'Apr 23, 2025 at 2:00 pm',
+    dateTime: 'Apr 27, 2025 at 3:00 pm',
     duration: '(2.0 hours)',
     price: '200',
     rating: 4.3,
@@ -332,7 +332,7 @@ const Finalize = () => {
         <p>{formData.city}, {formData.region} </p>
       </div>
       <h2 className="section-title">Payment</h2>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}> 
         <div className="payment-method-selector">
           <label className="payment-option">
             <input
