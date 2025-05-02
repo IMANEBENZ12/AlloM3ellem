@@ -279,7 +279,7 @@
   }
   
   .booking-summary p {
-    color: #666;
+    color: #0c0c0c;
     font-size: 0.9rem;
   }
   
@@ -323,4 +323,26 @@
       flex-direction: column;
       gap: 10px;
     }
+  }
+
+  .handyman-card {
+    position: relative; /* Ensure the card is positioned correctly */
+    z-index: 1; /* Bring the card to the front */
+    cursor: pointer; /* Show pointer cursor to indicate it's clickable */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background-color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .handyman-card:hover {
+    transform: scale(1.02); /* Slightly enlarge the card on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a shadow on hover */
+  }
+  
+  .handyman-card.selected {
+    border-color: #007bff; /* Highlight the selected card */
+    background-color: #f0f8ff;
   }

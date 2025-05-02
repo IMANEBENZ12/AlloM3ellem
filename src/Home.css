@@ -12,6 +12,7 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
   
+  
   .logo-img {
     height: 40px;
   }
@@ -133,4 +134,35 @@
     font-size: 1rem;
     color: #555;
   }
+  /* Language Switcher Container */
+.language-switcher {
+  display: flex;
+  gap: 10px; /* Space between buttons */
+  justify-content: flex-end; /* Align to the right */
+  margin-top: 10px;
+}
+
+/* Language Switcher Buttons */
+.language-switcher button {
+  background-color: #007bff; /* Blue background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 8px 12px; /* Add padding */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 14px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+}
+
+/* Hover Effect */
+.language-switcher button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+/* Active Language Button */
+.language-switcher button.active {
+  background-color: #eb8a0c; /* Green background for active language */
+  font-weight: bold; /* Bold text for active language */
+}
   

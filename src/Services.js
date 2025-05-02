@@ -1,71 +1,71 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next"; // Import useTranslation
+import Navbar from "./Navbar.js";
 import "./Services.css";
 
-const serviceData = [
-  {
-    title: "Home Cleaning",
-    description: "Experienced, background-checked professionals to clean your home.",
-    image: "/images/cleaning.png"
-  },
-  {
-    title: "Electrical Help",
-    description: "Light fixture replacement, wiring issues, and other electric needs.",
-    image: "/images/electritian.png"
-  },
-  {
-    title: "Plumbing Help",
-    description: "Get help with lifting and moving your belongings.",
-    image: "/images/plumb.jpg"
-  }
-];
-
 const ServicesPage = () => {
+  const { t, i18n } = useTranslation(); // Initialize translation hook
+
+  const serviceData = [
+    {
+      title: t("homeCleaning"),
+      description: t("homeCleaningDesc"),
+      image: "/images/cleaning.png",
+      link: "/cleaning-booking"
+    },
+    {
+      title: t("electricalHelp"),
+      description: t("electricalHelpDesc"),
+      image: "/images/electritian.png",
+      link: "/electrical-booking"
+    },
+    {
+      title: t("plumbingHelp"),
+      description: t("plumbingHelpDesc"),
+      image: "/images/plumb.jpg",
+      link: "/plumbing-booking"
+    },
+    {
+      title: t("carpentryHelp"), // New Carpentry Service
+      description: t("carpentryHelpDesc"),
+      image: "/images/Carpentry.png",
+      link: "/carpentry-booking"
+    },
+    {
+      title: t("acRepairs"), // New A/C Repairs Service
+      description: t("acRepairsDesc"),
+      image: "/images/ac.png",
+      link: "/ac-booking"
+    }
+  ];
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng); // Change the language
+  };
+
   return (
     <div className="services-page">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">
-          <img src="images/service-a-domicile.png" alt="Logo" className="logo-img" />
-        </div>
-        <div className="nav-buttons">
-          <Link to="/home" className="nav-btn">Home</Link>
-          <Link to="/services" className="nav-btn">Services</Link>
-          <button className="nav-btn">Become a Pro</button>
-          <Link to="/login" className="login-btn">Log in</Link>
-        </div>
-      </nav>
+      <Navbar />
 
-      <h1>Book a service</h1>
-      <p className="subtitle">Top-rated professionals for any home project</p>
+      <h1>{t("servicesTitle")}</h1>
+      <p className="subtitle">{t("servicesSubtitle")}</p>
       <div className="services-list">
         {serviceData.map((service, index) => (
           <div className="service-card" key={index}>
             <img src={service.image} className="service-image" alt={service.title} />
             <h2>{service.title}</h2>
             <p>{service.description}</p>
-            {service.title === "Home Cleaning" ? (
-              <Link to="/cleaning-booking" className="book-now-btn">
-                Book now
-              </Link>
-            ) : service.title === "Plumbing Help" ? (
-              <Link to="/booking" className="book-now-btn">
-                Book now
-              </Link>
-            ) : service.title === "Electrical Help" ? (
-              <Link to="/electrical-booking" className="book-now-btn">
-                Book now
-              </Link>
-            ) : (
-              <button className="book-now-btn">Book now</button>
-            )}
+            <Link to={service.link} className="book-now-btn">
+              {t("bookNow")}
+            </Link>
           </div>
         ))}
       </div>
 
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; 2025 ALLOM3ELEM. All rights reserved.</p>
+        <p>{t("footer")}</p>
       </footer>
     </div>
   );

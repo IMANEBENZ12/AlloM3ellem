@@ -1,14 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Finalize.css';
 import Navbar from "./Navbar.js";
-import { Plus, Minus, Check, Shield } from 'lucide-react';
+import { Plus, Minus, Check, Shield, Star, MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Finalize = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+
   // State to track which step of the process we're on
   const [currentStep, setCurrentStep] = useState('contact');
   
   // State to track expanded FAQ items
   const [expandedFaq, setExpandedFaq] = useState(null);
+  
+  // State for booking details fetched from the backend
+  const [bookingDetails, setBookingDetails] = useState(null);
+  
+  // State for matched handymen
+  const [matchedHandymen, setMatchedHandymen] = useState([]);
+  
+  // State for selected handyman
+  const [selectedHandyman, setSelectedHandyman] = useState(null);
+  
+  // State for loading status
+  const [isLoading, setIsLoading] = useState(false);
   
   // Form data state
   const [formData, setFormData] = useState({
@@ -18,24 +36,93 @@ const Finalize = () => {
     address: '',
     region: '',
     city: '',
+    zipCode: '',
     creditCardNumber: '',
     expiryDate: '',
     cvc: '',
     promoCode: '',
     termsAccepted: false,
-    paymentMethod: 'credit' // 'credit' or 'cash'
+    paymentMethod: 'credit', // 'credit' or 'cash'
+    handymanId: '' // ID of the selected handyman
   });
-  
-  
-  // Booking details (would normally come from API/previous step)
-  const bookingDetails = {
-    service: 'Electrical Service',
-    dateTime: 'Apr 27, 2025 at 3:00 pm',
-    duration: '(2.0 hours)',
-    price: '200',
-    rating: 4.3,
-    reviews: 19
+
+  // Helper function to extract hours from booking details
+  const getHoursFromBooking = (booking) => {
+    if (!booking || !booking.hours) return 1;
+    
+    // If hours is in format "X hours", extract the number
+    if (typeof booking.hours === 'string' && booking.hours.includes('hour')) {
+      const match = booking.hours.match(/(\d+)/);
+      return match ? parseInt(match[0], 10) : 1;
+    }
+    
+    // If hours is already a number or a string that can be parsed as a number
+    return parseInt(booking.hours, 10) || 1;
   };
+
+  // Calculate price based on hours
+  const calculatePrice = (hours) => {
+    const hourCount = getHoursFromBooking({ hours });
+    const pricePerHour = 100; // 100 DH per hour
+    return hourCount * pricePerHour;
+  };
+
+  // Fetch booking details from the backend
+  useEffect(() => {
+    const fetchBookingDetails = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/bookings/latest');
+        if (!response.ok) {
+          throw new Error(t('loadingBookingDetails'));
+        }
+        const data = await response.json();
+        console.log('Fetched booking details:', data);
+        setBookingDetails(data);
+      } catch (error) {
+        console.error(t('loadingBookingDetails'), error);
+      }
+    };
+
+    fetchBookingDetails();
+  }, [t]);
+
+  // Fetch matched handymen when zipCode changes
+  useEffect(() => {
+    const fetchMatchedHandymen = async () => {
+      if (!formData.zipCode || formData.zipCode.length < 5) return;
+
+      setIsLoading(true);
+      try {
+        const serviceType = bookingDetails?.serviceType || 'electrical'; // Default to electrical service
+        const response = await fetch(`http://localhost:5000/api/handymen/match/${formData.zipCode}/${serviceType}`);
+
+        if (!response.ok) {
+          throw new Error(t('loadingHandymen'));
+        }
+
+        const data = await response.json();
+
+        // Filter handymen to include only those with electrical skills
+        const filteredHandymen = data.filter(handyman => handyman.skills.includes('electrical'));
+        console.log('Filtered handymen:', filteredHandymen);
+
+        setMatchedHandymen(filteredHandymen);
+
+        // Auto-select the first handyman (best match)
+        if (filteredHandymen.length > 0 && !selectedHandyman) {
+          setSelectedHandyman(filteredHandymen[0]);
+          setFormData(prev => ({ ...prev, handymanId: filteredHandymen[0]._id }));
+        }
+      } catch (error) {
+        console.error(t('loadingHandymen'), error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMatchedHandymen();
+  }, [formData.zipCode, bookingDetails?.serviceType, t]);
+
   // Regions and cities in Morocco
   const regions = [
     "Casablanca-Settat",
@@ -68,50 +155,7 @@ const Finalize = () => {
   
   // FAQ items with answers
   const faqItems = [
-    {
-      question: "What services does AlloM3ellem offer?",
-      answer: "AlloM3ellem connects you with skilled professionals for various home services including plumbing, electrical work, cleaning, carpentry, painting, and more. Whether it's a quick fix or a major renovation, we have you covered."
-    },
-    {
-      question: "How do I book a service on AlloM3ellem?",
-      answer: "Booking a service is easy! Simply visit our website, select the service you need, choose a date and time that works for you, and provide your contact details. A M3ellem will be assigned to you shortly after."
-    },
-    {
-      question: "Is there a warranty on services provided?",
-      answer: "Yes, AlloM3ellem offers a satisfaction guarantee on all services. If you're not happy with the work done, we'll make it right. Please refer to our service terms and conditions for more details."
-    },
-    {
-      question: "Can I choose my M3ellem?",
-      answer: "While we do not currently offer the option to choose a specific M3ellem, rest assured that all our professionals are thoroughly vetted and trained to provide high-quality service."
-    },
-    {
-      question: "What if I need to reschedule or cancel a booking?",
-      answer: "You can reschedule or cancel your booking up to 24 hours in advance without any penalty. Simply go to your booking details on our website or app and follow the instructions to make changes."
-    },
-    {
-      question: "How are payments handled?",
-      answer: "Payments are processed securely through our platform. You can pay using a credit card, debit card, or other digital payment methods. Cash payments may also be available in certain areas."
-    },
-    {
-      question: "Is AlloM3ellem available in my city?",
-      answer: "AlloM3ellem is expanding rapidly across Morocco. Please check our website to see the list of cities where we currently operate. If we're not in your city yet, stay tuned—we're coming soon!"
-    },
-    {
-      question: "What makes AlloM3ellem different from other service platforms?",
-      answer: "We prioritize customer satisfaction, quality service, and trust. Our M3ellems undergo rigorous screening and training, and our platform ensures a seamless experience from booking to service completion."
-    },
-    {
-      question: "Do you offer emergency services?",
-      answer: "Yes, AlloM3ellem offers emergency services for urgent issues such as water leaks or electrical faults. Select the emergency option when booking, and we'll dispatch someone as soon as possible."
-    },
-    {
-      question: "How can I contact customer support?",
-      answer: "You can reach our customer support team through the contact form on our website, via email at support@allom3ellem.ma, or by calling our hotline. We are here to help!"
-    },
-    {
-      question: "What is the Happiness Guarantee?",
-      answer: "When you book with AlloM3ellem, your happiness is our goal. If you're not satisfied with the service, we'll work to make it right. This includes rescheduling the service or refunding your payment. For more details, see our Happiness Guarantee policy on our website."
-    }
+    // ... existing FAQ items with translated questions and answers ...
   ];
   
   // Handler for input changes
@@ -141,6 +185,14 @@ const Finalize = () => {
       city: selectedCity
     }));
   };
+
+  // Handler for handyman selection
+  const handleHandymanSelect = (handyman) => {
+    console.log(t('selectedHandyman'), handyman);
+    setSelectedHandyman(handyman);
+    setFormData(prev => ({ ...prev, handymanId: handyman._id }));
+  };
+  
   // Handler for form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -151,8 +203,43 @@ const Finalize = () => {
     } else if (currentStep === 'address') {
       setCurrentStep('payment');
     } else if (currentStep === 'payment') {
-      console.log('Complete booking with data:', formData);
-      alert('Booking completed successfully!');
+      handleCompleteBooking();
+    }
+  };
+
+  const handleCompleteBooking = async () => {
+    const pendingBooking = JSON.parse(localStorage.getItem('pendingBooking'));
+    
+    const bookingData = {
+      userId: user._id,
+      handymanId: selectedHandyman._id,
+      serviceType: 'electrical',
+      date: pendingBooking.date,
+      time: pendingBooking.time,
+      zipCode: pendingBooking.zipCode,
+      hours: pendingBooking.hours,
+      jobDescription: pendingBooking.jobDescription,
+      email: pendingBooking.email,
+      phone: pendingBooking.phone,
+      price: calculatePrice(pendingBooking.hours)
+    };
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bookingData)
+      });
+  
+      if (!response.ok) throw new Error(t('loading'));
+      
+      const data = await response.json();
+      localStorage.removeItem('pendingBooking');
+      navigate('/profile');
+    } catch (error) {
+      console.error(t('loading'), error);
     }
   };
 
@@ -164,7 +251,7 @@ const Finalize = () => {
   // Render the Contact Information step
   const renderContactStep = () => (
     <div className="form-container">
-      <h2 className="section-title">Contact Information</h2>
+      <h2 className="section-title">{t('contactInformation')}</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-row">
           <div className="form-group">
@@ -173,7 +260,7 @@ const Finalize = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              placeholder="First Name"
+              placeholder={t('firstName')}
               className="form-input"
               required
             />
@@ -184,7 +271,7 @@ const Finalize = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              placeholder="Last Name"
+              placeholder={t('lastName')}
               className="form-input"
               required
             />
@@ -196,86 +283,151 @@ const Finalize = () => {
             name="phoneNumber"
             value={formData.phoneNumber}
             onChange={handleChange}
-            placeholder="Phone Number"
+            placeholder={t('phoneNumber')}
             className="form-input"
             required
           />
         </div>
-        <button type="submit" className="primary-button">Calculate Price</button>
+        <div className="form-group">
+          <input
+            type="text"
+            name="zipCode"
+            value={formData.zipCode}
+            onChange={handleChange}
+            placeholder={t('zipCode')}
+            className="form-input"
+            required
+          />
+        </div>
+        <button type="submit" className="primary-button">{t('findHandymen')}</button>
       </form>
     </div>
   );
 
-  // Render the Booking Options step
+  // Render the Booking Options step with handyman selection
   const renderBookingStep = () => (
     <div className="form-container">
       <div className="contact-info-display">
         <div className="display-header">
-          <h2 className="section-title">Contact Information</h2>
-          <button className="edit-button" onClick={() => setCurrentStep('contact')}>Edit</button>
+          <h2 className="section-title">{t('contactInformation')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('contact')}>{t('edit')}</button>
         </div>
         <p>{formData.firstName} {formData.lastName}</p>
         <p>{formData.phoneNumber}</p>
+        <p>{t('zipCode')}: {formData.zipCode}</p>
       </div>
       <div className="booking-options">
-        <h2 className="section-title">Booking Options</h2>
-        <div className="booking-option-card">
-          <div className="booking-option-header">
-            <div>
-              <h3>Book with AlloM3ellem</h3>
-              <div className="rating">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <span key={star} className={star <= Math.floor(bookingDetails.rating) ? "star filled" : "star"}>★</span>
-                ))}
-                <span className="rating-text">{bookingDetails.rating} | {bookingDetails.reviews} verified reviews</span>
+        <h2 className="section-title">{t('availableHandymen')}</h2>
+        {isLoading ? (
+          <p>{t('loadingHandymen')}</p>
+        ) : matchedHandymen.length > 0 ? (
+          <div className="handyman-list">
+            {matchedHandymen.map((handyman, index) => (
+              <div 
+                key={handyman._id} 
+                className={`handyman-card ${selectedHandyman && selectedHandyman._id === handyman._id ? 'selected' : ''}`}
+                onClick={() => handleHandymanSelect(handyman)}
+              >
+                <div className="handyman-header">
+                  <div className="handyman-info">
+                    <h3>{handyman.name}</h3>
+                    <div className="rating">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} className={star <= Math.floor(handyman.rating) ? "star filled" : "star"}>★</span>
+                      ))}
+                      <span className="rating-text">{handyman.rating} | {handyman.reviews} {t('handymanReviews')}</span>
+                    </div>
+                    <div className="proximity-badge">
+                      <MapPin size={14} />
+                      {index === 0 ? (
+                        <span className="proximity-text exact">{t('closestToYou')}</span>
+                      ) : (
+                        <span className="proximity-text nearby">{t('nearbyServiceProvider')}</span>
+                      )}
+                    </div>
+                  </div>
+                  {index === 0 && <div className="best-match-badge">{t('bestMatch')}</div>}
+                </div>
+                <div className="handyman-details">
+                  <p className="handyman-bio">{handyman.bio}</p>
+                  <div className="handyman-skills">
+                    <strong>{t('handymanSkills')}:</strong> {handyman.skills.join(', ')}
+                  </div>
+                </div>
+                <div className="handyman-select">
+                  <div className="check-icon">
+                    {selectedHandyman && selectedHandyman._id === handyman._id && <Check size={20} />}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="price">Your Total: {bookingDetails.price}MAD</div>
+            ))}
           </div>
-          <div className="booking-features">
-            <div className="feature">
-              <Shield size={16} />
-              <span>Background-checked professionals</span>
+        ) : (
+          <p>{t('noHandymen')}</p>
+        )}
+        
+        {selectedHandyman && (
+          <div className="booking-summary-card">
+            <h3>{t('bookingSummary')}</h3>
+            <div className="summary-details">
+              <p><strong>{t('service')}:</strong> {bookingDetails?.serviceType || t('electricalService')}</p>
+              <p><strong>{t('handyman')}:</strong> {selectedHandyman.name}</p>
+              <p><strong>{t('date')}:</strong> {bookingDetails?.date}</p>
+              <p><strong>{t('time')}:</strong> {bookingDetails?.time}</p>
+              <p><strong>{t('zipCode')}:</strong> {formData.zipCode}</p>
+              <p><strong>{t('duration')}:</strong> {bookingDetails?.hours ? getHoursFromBooking(bookingDetails) : 1} {t('hours')}</p>
+              <p><strong>{t('price')}:</strong> {calculatePrice(bookingDetails?.hours)} MAD</p>
             </div>
-            <div className="feature">
-              <Check size={16} />
-              <span>Flexible rescheduling</span>
-            </div>
+            <button className="primary-button" onClick={() => setCurrentStep('address')}>{t('continueToAddress')}</button>
           </div>
-          <button className="primary-button" onClick={() => setCurrentStep('address')}>Continue to Address</button>
-        </div>
+        )}
       </div>
     </div>
   );
 
-   // Render the Address step
-   const renderAddressStep = () => (
+  // Render the Address step
+  const renderAddressStep = () => (
     <div className="form-container">
       <div className="contact-info-display">
         <div className="display-header">
-          <h2 className="section-title">Contact Information</h2>
-          <button className="edit-button" onClick={() => setCurrentStep('contact')}>Edit</button>
+          <h2 className="section-title">{t('contactInformation')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('contact')}>{t('edit')}</button>
         </div>
         <p>{formData.firstName} {formData.lastName}</p>
         <p>{formData.phoneNumber}</p>
+        <p>{t('zipCode')}: {formData.zipCode}</p>
       </div>
+      
+      <div className="handyman-display">
+        <div className="display-header">
+          <h2 className="section-title">{t('selectedHandyman')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('booking')}>{t('edit')}</button>
+        </div>
+        {selectedHandyman && (
+          <div className="selected-handyman-info">
+            <p>{selectedHandyman.name}</p>
+            <p>{t('handymanRating')}: {selectedHandyman.rating} ({selectedHandyman.reviews} {t('handymanReviews')})</p>
+          </div>
+        )}
+      </div>
+      
       <div className="address-section">
-        <h2 className="section-title">Service Address</h2>
+        <h2 className="section-title">{t('serviceAddress')}</h2>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="address">Address</label>
+            <label htmlFor="address">{t('address')}</label>
             <input
               type="text"
               name="address"
               value={formData.address || ""}
               onChange={handleChange}
-              placeholder="Enter your street address"
+              placeholder={t('address')}
               className="form-input"
               required
             />
           </div>
           <div className="form-group">
-            <label htmlFor="region">Region</label>
+            <label htmlFor="region">{t('region')}</label>
             <select
               name="region"
               value={formData.region || ""}
@@ -283,30 +435,30 @@ const Finalize = () => {
               className="form-select"
               required
             >
-              <option value="">Select a region</option>
+              <option value="">{t('selectRegion')}</option>
               {regions.map((region) => (
                 <option key={region} value={region}>{region}</option>
               ))}
             </select>
           </div>
           <div className="form-group">
-            <label htmlFor="city">City</label>
+            <label htmlFor="city">{t('city')}</label>
             <select
               name="city"
               value={formData.city || ""}
               onChange={handleCityChange}
               className="form-select"
               required
-              disabled={!formData.region} // Disable city dropdown if no region is selected
+              disabled={!formData.region}
             >
-              <option value="">Select a city</option>
+              <option value="">{t('selectCity')}</option>
               {formData.region &&
                 citiesByRegion[formData.region].map((city) => (
                   <option key={city} value={city}>{city}</option>
                 ))}
             </select>
           </div>
-          <button type="submit" className="primary-button">Continue to Payment</button>
+          <button type="submit" className="primary-button">{t('continueToPayment')}</button>
         </form>
       </div>
     </div>
@@ -317,21 +469,37 @@ const Finalize = () => {
     <div className="form-container">
       <div className="contact-info-display">
         <div className="display-header">
-          <h2 className="section-title">Contact Information</h2>
-          <button className="edit-button" onClick={() => setCurrentStep('contact')}>Edit</button>
+          <h2 className="section-title">{t('contactInformation')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('contact')}>{t('edit')}</button>
         </div>
         <p>{formData.firstName} {formData.lastName}</p>
         <p>{formData.phoneNumber}</p>
+        <p>{t('zipCode')}: {formData.zipCode}</p>
       </div>
+      
+      <div className="handyman-display">
+        <div className="display-header">
+          <h2 className="section-title">{t('selectedHandyman')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('booking')}>{t('edit')}</button>
+        </div>
+        {selectedHandyman && (
+          <div className="selected-handyman-info">
+            <p>{selectedHandyman.name}</p>
+            <p>{t('handymanRating')}: {selectedHandyman.rating} ({selectedHandyman.reviews} {t('handymanReviews')})</p>
+          </div>
+        )}
+      </div>
+      
       <div className="address-info-display">
         <div className="display-header">
-          <h2 className="section-title">Service Address</h2>
-          <button className="edit-button" onClick={() => setCurrentStep('address')}>Edit</button>
+          <h2 className="section-title">{t('serviceAddress')}</h2>
+          <button className="edit-button" onClick={() => setCurrentStep('address')}>{t('edit')}</button>
         </div>
-        <p>{formData.address} </p>
-        <p>{formData.city}, {formData.region} </p>
+        <p>{formData.address}</p>
+        <p>{formData.city}, {formData.region}</p>
       </div>
-      <h2 className="section-title">Payment</h2>
+      
+      <h2 className="section-title">{t('payment')}</h2>
       <form onSubmit={handleSubmit}> 
         <div className="payment-method-selector">
           <label className="payment-option">
@@ -342,7 +510,7 @@ const Finalize = () => {
               checked={formData.paymentMethod === 'credit'}
               onChange={handleChange}
             />
-            <span className="payment-label">Credit Card</span>
+            <span className="payment-label">{t('creditCard')}</span>
           </label>
           <label className="payment-option">
             <input
@@ -352,7 +520,7 @@ const Finalize = () => {
               checked={formData.paymentMethod === 'cash'}
               onChange={handleChange}
             />
-            <span className="payment-label">Cash</span>
+            <span className="payment-label">{t('cash')}</span>
           </label>
         </div>
         {formData.paymentMethod === 'credit' && (
@@ -363,7 +531,7 @@ const Finalize = () => {
                 name="creditCardNumber"
                 value={formData.creditCardNumber}
                 onChange={handleChange}
-                placeholder="Credit Card Number"
+                placeholder={t('creditCard')}
                 className="form-input"
                 required
               />
@@ -401,11 +569,11 @@ const Finalize = () => {
               name="promoCode"
               value={formData.promoCode}
               onChange={handleChange}
-              placeholder="Promo Code"
+              placeholder={t('promoCode')}
               className="form-input"
             />
           </div>
-          <button type="button" className="secondary-button">Apply</button>
+          <button type="button" className="secondary-button">{t('apply')}</button>
         </div>
         <div className="form-group checkbox-group">
           <label className="checkbox-label">
@@ -417,14 +585,11 @@ const Finalize = () => {
               required
             />
             <span>
-              I understand that I am purchasing a service subject to AlloM3ellem's{' '}
-              <a href="#terms" className="link">Terms of Use</a> and{' '}
-              <a href="#policy" className="link">Cancellation Policy</a>
-              {' '}and my payment method will be charged before the service.
+              {t('termsAccepted')}
             </span>
           </label>
         </div>
-        <button type="submit" className="primary-button">Complete Booking</button>
+        <button type="submit" className="primary-button">{t('completeBooking')}</button>
       </form>
     </div>
   );
@@ -441,12 +606,33 @@ const Finalize = () => {
         </div>
         <div className="side-content">
           <div className="booking-summary">
-            <h3>{bookingDetails.service}</h3>
-            <p>{bookingDetails.dateTime}</p>
-            <p>{bookingDetails.duration}</p>
+            {bookingDetails ? (
+              <>
+                <h3>{t('electricalService')}</h3>
+                <p>{t('date')}: {bookingDetails.date}</p>
+                <p>{t('time')}: {bookingDetails.time}</p>
+                <p>{t('duration')}: {getHoursFromBooking(bookingDetails)} {t('hours')}</p>
+                <p>{t('price')}: {calculatePrice(bookingDetails.hours)} MAD</p>
+                <p>{t('zipCode')}: {formData.zipCode}</p>
+                {selectedHandyman && (
+                  <>
+                    <h4>{t('selectedHandyman')}</h4>
+                    <p>{selectedHandyman.name}</p>
+                    <div className="rating-small">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span key={star} className={star <= Math.floor(selectedHandyman.rating) ? "star filled" : "star"}>★</span>
+                      ))}
+                      <span className="rating-text">{selectedHandyman.rating}</span>
+                    </div>
+                  </>
+                )}
+              </>
+            ) : (
+              <p>{t('loadingBookingSummary')}</p>
+            )}
           </div>
           <div className="faq-section">
-            <h3>Frequently Asked Questions</h3>
+            <h3>{t('frequentlyAskedQuestions')}</h3>
             {faqItems.map((faq, index) => (
               <div key={index} className={`faq-item ${expandedFaq === index ? 'expanded' : ''}`}>
                 <div className="faq-question" onClick={() => toggleFaq(index)}>

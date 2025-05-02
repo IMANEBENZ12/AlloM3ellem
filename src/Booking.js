@@ -1,12 +1,14 @@
-// Booking.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Booking.css';
 import Navbar from "./Navbar.js";
 import { Clock, CheckSquare, MessageSquare } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-const Booking = () => {
+const PlumbingBooking = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
-    zipCode: '',
+    ZipCode: '',
     jobDescription: '',
     hours: '',
     date: '',
@@ -14,7 +16,10 @@ const Booking = () => {
     email: '',
     phone: ''
   });
-  
+  const [locationError, setLocationError] = useState('');
+  const [loadingLocation, setLoadingLocation] = useState(false);
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -22,87 +27,146 @@ const Booking = () => {
       [name]: value
     }));
   };
+
+  const getLocationAndZip = () => {
+    if (!navigator.geolocation) {
+      setLocationError(t('locationError.geolocationNotSupported'));
+      return;
+    }
   
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Booking submitted:', formData);
-    // Handle submission logic here
+    setLoadingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+  
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+  
+          const zip = data.address.postcode;
+          const city = data.address.city || data.address.town || data.address.village;
+  
+          if (zip) {
+            setFormData(prev => ({
+              ...prev,
+              ZipCode: zip
+            }));
+            setLocationError('');
+          } else {
+            setLocationError(t('locationError.zipNotFound'));
+          }
+        } catch (error) {
+          console.error(error);
+          setLocationError(t('locationError.fetchError'));
+        }
+  
+        setLoadingLocation(false);
+      },
+      (error) => {
+        console.error(error);
+        setLocationError(t('locationError.permissionDenied'));
+        setLoadingLocation(false);
+      }
+    );
   };
   
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    localStorage.setItem('pendingBooking', JSON.stringify({
+      zipCode: formData.ZipCode,
+      jobDescription: formData.jobDescription,
+      hours: parseInt(formData.hours, 10),
+      date: formData.date,
+      time: formData.time,
+      email: formData.email,
+      phone: formData.phone
+    }));
+    
+    navigate('/finalize-plumbing');
+  };
+
   // Options for dropdowns
   const hourOptions = ['1 hour', '2 hours', '3 hours', '4 hours', '5+ hours'];
-  const timeOptions = ['8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM', '6:00 PM', '7:00 PM'];
-  
+  const timeOptions = ['8:00', '9:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00'];
+
   return (
     <div className="booking-container">
-    <Navbar />
+      <Navbar />
       <div className="booking-content">
         <div className="service-details">
-          <h1>Plumbing Service</h1>
-          
+          <h1>{t('plumbingService')}</h1>
           
           <p className="service-description">
-            When you have a plumbing issue that needs professional attention, look no further than AlloM3ellem. 
-            No matter how skilled you might be at home maintenance, some jobs should only ever be 
-            tackled by a professional, and plumbing is one of them. When you book plumbers through the 
-            AlloM3ellem platform, you'll be booking a cheap but reliable plumbing professional who will know 
-            just where to look to find the source of the problem and who will have all the right tools and 
-            expertise to fix it.
+            {t('PlumbingserviceDescription')}
           </p>
           
           <ul className="benefits-list">
             <li>
               <CheckSquare className="check-icon" />
-              <span>Vetted and <a href="#" className="link">screened professionals</a>.</span>
+              <span>{t('vettedProfessionals')}</span>
             </li>
             <li>
               <CheckSquare className="check-icon" />
-              <span>Friendly 24/7 customer service.</span>
+              <span>{t('friendlySupport')}</span>
             </li>
             <li>
               <CheckSquare className="check-icon" />
-              <span>Backed by the <a href="#" className="link">Handy Happiness Guarantee</a>.</span>
+              <span>{t('happinessGuarantee')}</span>
             </li>
             <li>
               <CheckSquare className="check-icon" />
-              <span>Affordable, upfront pricing.</span>
+              <span>{t('affordablePricing')}</span>
             </li>
             <li>
               <CheckSquare className="check-icon" />
-              <span>No time windows, book when you want.</span>
+              <span>{t('noTimeWindows')}</span>
             </li>
           </ul>
         </div>
         
         <div className="booking-form-container">
-          <h2>Plumbing Service</h2>
+          <h2>{t('plumbingService')}</h2>
           <form onSubmit={handleSubmit} className="booking-form">
             <div className="form-group">
-              <input
-                type="text"
-                name="zipCode"
-                value={formData.zipCode}
-                onChange={handleChange}
-                placeholder="Enter location"
-                className="form-input"
-                required
-              />
+              <label>{t('enterZipCode')}</label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  name="ZipCode"
+                  value={formData.ZipCode}
+                  onChange={handleChange}
+                  placeholder={t('enterZipCode')}
+                  className="form-input"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={getLocationAndZip}
+                  className="get-location-button"
+                  disabled={loadingLocation}
+                >
+                  {loadingLocation ? t('loading') : t('useMyLocation')}
+                </button>
+              </div>
+              {locationError && <p className="error-text">{locationError}</p>}
             </div>
             
             <div className="form-group">
-              <label>Tell us about the job</label>
+              <label>{t('jobDescription')}</label>
               <textarea
                 name="jobDescription"
                 value={formData.jobDescription}
                 onChange={handleChange}
-                placeholder="Please describe the job in detail. (required)"
+                placeholder={t('jobDescriptionPlaceholder')}
                 className="form-textarea"
                 required
               ></textarea>
             </div>
             
             <div className="form-group">
-              <label>How many hours would you like to book?</label>
+              <label>{t('howManyHours')}</label>
               <select
                 name="hours"
                 value={formData.hours}
@@ -110,23 +174,25 @@ const Booking = () => {
                 className="form-select"
                 required
               >
-                {hourOptions.map(option => (
-                  <option key={option} value={option}>{option}</option>
-                ))}
+                <option value="1">1 {t('hours')}</option>
+                <option value="2">2 {t('hours')}</option>
+                <option value="3">3 {t('hours')}</option>
+                <option value="4">4 {t('hours')}</option>
+                <option value="5">5+ {t('hours')}</option>
               </select>
             </div>
             
             <div className="form-group">
-              <label>When would you like a Pro to come?</label>
+              <label>{t('whenProArrives')}</label>
               <input
                 type="date"
-    name="date"
-    value={formData.date}
-    onChange={handleChange}
-    className="form-input"
-    required
-  />
-</div>
+                name="date"
+                value={formData.date}
+                onChange={handleChange}
+                className="form-input"
+                required
+              />
+            </div>
             
             <div className="form-group">
               <select
@@ -148,7 +214,7 @@ const Booking = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="Email Address"
+                placeholder={t('emailPlaceholder')}
                 className="form-input"
                 required
               />
@@ -160,41 +226,39 @@ const Booking = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                placeholder="Phone Number (Optional)"
+                placeholder={t('phonePlaceholder')}
                 className="form-input"
               />
             </div>
             
-            <button type="submit" className="get-price-button">Get a Price</button>
-            
-            
+            <button type="submit" className="get-price-button">{t('getPrice')}</button>
           </form>
         </div>
       </div>
       
       <div className="how-it-works">
-        <h2>How AlloM3ellem Works</h2>
+        <h2>{t('howItWorks')}</h2>
         <div className="steps-container">
           <div className="step">
             <div className="step-icon">
               <Clock size={40} />
             </div>
-            <p>Pick a Time</p>
-            <p> Select the day and time for your service and get instant, affordable pricing. </p>
+            <p>{t('pickTime')}</p>
+            <p>{t('pickTimeDesc')}</p>
           </div>
           
           <div className="step">
             <div className="step-icon">
               <MessageSquare size={40} />
             </div>
-            <p>Book instantly</p>
+            <p>{t('bookInstantly')}</p>
           </div>
           
           <div className="step">
             <div className="step-icon">
               <div className="pro-icon"></div>
             </div>
-            <p>Your pro arrives</p>
+            <p>{t('proArrives')}</p>
           </div>
         </div>
       </div>
@@ -202,4 +266,4 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default PlumbingBooking;

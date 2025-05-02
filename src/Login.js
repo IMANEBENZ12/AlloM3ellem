@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Facebook, Mail, Apple } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import Navbar from "./Navbar.js";
 import './Login.css';
 
 function Login() {
+  const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(true);
   const navigate = useNavigate();
 
-  // Form states
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,8 +18,6 @@ function Login() {
     confirmPassword: '',
     phoneNumber: '',
     address: '',
-    role: 'client', // Default role
-    language: 'fr'  // Default language
   });
 
   const [error, setError] = useState('');
@@ -27,12 +27,12 @@ function Login() {
 
   const handleChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setError(''); // Clear errors when user changes input
+    setError('');
   };
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
-    setError(''); // Clear errors when switching forms
+    setError('');
   };
 
   const handleBackToHome = () => {
@@ -42,61 +42,60 @@ function Login() {
   const validateForm = () => {
     if (isSignUp) {
       if (!firstName || !lastName || !email || !password || !phoneNumber) {
-        setError('Veuillez remplir tous les champs obligatoires');
+        setError(t('requiredFieldsError'));
         return false;
       }
       if (password !== confirmPassword) {
-        setError('Les mots de passe ne correspondent pas');
+        setError(t('passwordMismatchError'));
         return false;
       }
       if (password.length < 6) {
-        setError('Le mot de passe doit contenir au moins 6 caractères');
+        setError(t('passwordLengthError'));
         return false;
       }
     } else {
       if (!email || !password) {
-        setError('Veuillez remplir tous les champs obligatoires');
+        setError(t('requiredFieldsError'));
         return false;
       }
     }
     return true;
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
-      const endpoint = isSignUp ? '/api/auth/register' : '/api/auth/login';
-      
-      const requestBody = isSignUp 
+      const endpoint = isSignUp
+        ? 'http://localhost:5000/api/auth/register'
+        : 'http://localhost:5000/api/auth/login';
+
+      const requestBody = isSignUp
         ? { firstName, lastName, email, password, phoneNumber, address, role: 'client', language: 'fr' }
         : { email, password };
-      
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(requestBody)
+        body: JSON.stringify(requestBody),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.msg || data.errors[0].msg || 'Une erreur est survenue');
+        throw new Error(data.msg || data.errors?.[0]?.msg || t('genericError'));
       }
-      
-      // Save token and user data in localStorage
+
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Redirect to home page or dashboard
-      navigate('/');
-      
+
+      navigate('/home');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -105,17 +104,15 @@ function Login() {
   };
 
   const handleSocialLogin = (provider) => {
-    // This would be implemented based on your social login strategy
-    console.log(`Login with ${provider}`);
-    // For now we'll just show a placeholder message
-    setError(`Social login with ${provider} not implemented yet`);
+    setError(t('socialLoginError', { provider }));
   };
 
   return (
     <div className="login-container">
       <div className="login-form-container">
+        <Navbar />
         <div className="login-header">
-          <h2>{isSignUp ? "Créer un compte" : "Se connecter"}</h2>
+          <h2>{isSignUp ? t('createAccount') : t('signIn')}</h2>
         </div>
         
         {error && <div className="error-message">{error}</div>}
@@ -124,13 +121,13 @@ function Login() {
           {isSignUp && (
             <>
               <div className="form-group">
-                <label htmlFor="firstName" className="form-label">Prénom</label>
+                <label htmlFor="firstName" className="form-label">{t('firstName')}</label>
                 <input 
                   id="firstName" 
                   name="firstName" 
                   type="text" 
                   className="form-input" 
-                  placeholder="Entrez votre prénom" 
+                  placeholder={t('enterFirstName')} 
                   value={firstName}
                   onChange={handleChange}
                   required 
@@ -138,13 +135,13 @@ function Login() {
               </div>
               
               <div className="form-group">
-                <label htmlFor="lastName" className="form-label">Nom</label>
+                <label htmlFor="lastName" className="form-label">{t('lastName')}</label>
                 <input 
                   id="lastName" 
                   name="lastName" 
                   type="text" 
                   className="form-input" 
-                  placeholder="Entrez votre nom" 
+                  placeholder={t('enterLastName')} 
                   value={lastName}
                   onChange={handleChange}
                   required 
@@ -154,13 +151,13 @@ function Login() {
           )}
           
           <div className="form-group">
-            <label htmlFor="email" className="form-label">Email</label>
+            <label htmlFor="email" className="form-label">{t('email')}</label>
             <input 
               id="email" 
               name="email" 
               type="email" 
               className="form-input" 
-              placeholder="Entrez votre email" 
+              placeholder={t('enterEmail')} 
               value={email}
               onChange={handleChange}
               required 
@@ -169,13 +166,13 @@ function Login() {
           
           {isSignUp && (
             <div className="form-group">
-              <label htmlFor="phoneNumber" className="form-label">Numéro de téléphone</label>
+              <label htmlFor="phoneNumber" className="form-label">{t('phoneNumber')}</label>
               <input 
                 id="phoneNumber" 
                 name="phoneNumber" 
                 type="tel" 
                 className="form-input" 
-                placeholder="Entrez votre numéro de téléphone" 
+                placeholder={t('enterPhone')} 
                 value={phoneNumber}
                 onChange={handleChange}
                 required 
@@ -185,13 +182,13 @@ function Login() {
           
           {isSignUp && (
             <div className="form-group">
-              <label htmlFor="address" className="form-label">Adresse (optionnel)</label>
+              <label htmlFor="address" className="form-label">{t('address')}</label>
               <input 
                 id="address" 
                 name="address" 
                 type="text" 
                 className="form-input" 
-                placeholder="Entrez votre adresse" 
+                placeholder={t('enterAddress')} 
                 value={address}
                 onChange={handleChange}
               />
@@ -199,13 +196,13 @@ function Login() {
           )}
           
           <div className="form-group">
-            <label htmlFor="password" className="form-label">Mot de passe</label>
+            <label htmlFor="password" className="form-label">{t('password')}</label>
             <input 
               id="password" 
               name="password" 
               type="password" 
               className="form-input" 
-              placeholder={isSignUp ? "Créez un mot de passe" : "Entrez votre mot de passe"} 
+              placeholder={isSignUp ? t('createPassword') : t('enterPassword')} 
               value={password}
               onChange={handleChange}
               required 
@@ -214,13 +211,13 @@ function Login() {
           
           {isSignUp && (
             <div className="form-group">
-              <label htmlFor="confirmPassword" className="form-label">Confirmer le mot de passe</label>
+              <label htmlFor="confirmPassword" className="form-label">{t('confirmPassword')}</label>
               <input 
                 id="confirmPassword" 
                 name="confirmPassword" 
                 type="password" 
                 className="form-input" 
-                placeholder="Confirmez votre mot de passe" 
+                placeholder={t('confirmYourPassword')} 
                 value={confirmPassword}
                 onChange={handleChange}
                 required 
@@ -234,12 +231,12 @@ function Login() {
               className="submit-button"
               disabled={loading}
             >
-              {loading ? "Chargement..." : (isSignUp ? "S'inscrire" : "Se connecter")}
+              {loading ? t('loading') : (isSignUp ? t('register') : t('signInButton'))}
             </button>
           </div>
           
           <div className="divider">
-            <span>Ou continuer avec</span>
+            <span>{t('orContinueWith')}</span>
           </div>
 
           <div className="social-login">
@@ -268,13 +265,13 @@ function Login() {
           
           <div className="form-toggle">
             <p>
-              {isSignUp ? "Vous avez déjà un compte ?" : "Vous n'avez pas de compte ?"}
+              {isSignUp ? t('alreadyHaveAccount') : t('noAccount')}
               <button 
                 type="button"
                 onClick={toggleForm}
                 className="toggle-button"
               >
-                {isSignUp ? "Se connecter" : "S'inscrire"}
+                {isSignUp ? t('signInButton') : t('register')}
               </button>
             </p>
           </div>
@@ -285,7 +282,7 @@ function Login() {
               onClick={handleBackToHome}
               className="back-button"
             >
-              Retour à l'accueil
+              {t('backToHome')}
             </button>
           </div>
         </form>
