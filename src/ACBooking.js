@@ -74,6 +74,7 @@ const ACBooking = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    localStorage.setItem('zipCode', formData.ZipCode);
     localStorage.setItem('pendingBooking', JSON.stringify({
       zipCode: formData.ZipCode,
       jobDescription: formData.jobDescription,

@@ -155,7 +155,26 @@ const Finalize = () => {
   
   // FAQ items with answers
   const faqItems = [
-    // ... existing FAQ items with translated questions and answers ...
+    {
+      question: "What services do your plumbers provide?",
+      answer: "Our plumbers provide a wide range of services, including pipe repairs, leak detection, water heater installation, and more."
+    },
+    {
+      question: "How do I know the plumber is qualified?",
+      answer: "All our plumbers are verified professionals with years of experience and excellent customer reviews."
+    },
+    {
+      question: "Can I reschedule my booking?",
+      answer: "Yes, you can reschedule your booking up to 24 hours before the scheduled time without any penalty."
+    },
+    {
+      question: "What payment methods do you accept?",
+      answer: "We accept both credit card payments and cash on delivery."
+    },
+    {
+      question: "What happens if I’m not satisfied with the service?",
+      answer: "We offer a satisfaction guarantee. If you're not happy with the service, let us know, and we'll make it right."
+    }
   ];
   
   // Handler for input changes
@@ -192,6 +211,16 @@ const Finalize = () => {
     setSelectedHandyman(handyman);
     setFormData(prev => ({ ...prev, handymanId: handyman._id }));
   };
+  useEffect(() => {
+    // Retrieve the ZIP code from localStorage and set it in the form data
+    const savedZipCode = localStorage.getItem('zipCode');
+    if (savedZipCode) {
+      setFormData((prev) => ({
+        ...prev,
+        zipCode: savedZipCode
+      }));
+    }
+  }, []);
   
   // Handler for form submission
   const handleSubmit = (e) => {

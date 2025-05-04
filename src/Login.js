@@ -110,7 +110,7 @@ function Login() {
   return (
     <div className="login-container">
       <div className="login-form-container">
-        <Navbar />
+       
         <div className="login-header">
           <h2>{isSignUp ? t('createAccount') : t('signIn')}</h2>
         </div>

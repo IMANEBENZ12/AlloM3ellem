@@ -19,6 +19,7 @@ import CarpentryBooking from './CarpentaryBooking';
 import FinalizeCarpentry from './FinalizeCarpentry';
 import ACBooking from './ACBooking'; // Import ACBooking
 import FinalizeAC from './FinalizeAC'; 
+import AppStatus from './AppStatus'; 
 const App = () => {
   return (
     <Router>
@@ -41,6 +42,7 @@ const App = () => {
         <Route path="/finalize-carpentry" element={<FinalizeCarpentry />} /> 
         <Route path="/ac-booking" element={<ACBooking />} /> {/* Add ACBooking route */}
         <Route path="/finalize-ac" element={<FinalizeAC />} />
+        <Route path="/app-status" element={<AppStatus />} />
       </Routes>
     </Router>
   );

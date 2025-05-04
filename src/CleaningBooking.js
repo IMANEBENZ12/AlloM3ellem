@@ -56,6 +56,7 @@ const HouseCleaningPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
 
     try {
       // Save booking data to localStorage or send it to the backend

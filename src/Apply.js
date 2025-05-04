@@ -1,11 +1,12 @@
 // Apply.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './Apply.css';
 import Navbar from "./Navbar.js";
 import { Search, Calendar, PiggyBank } from 'lucide-react';
 
-
 const Apply = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -13,7 +14,7 @@ const Apply = () => {
     location: '',
     profession: ''
   });
-  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
@@ -21,16 +22,34 @@ const Apply = () => {
       [name]: value
     }));
   };
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log('Form submitted:', formData);
-    // Handle submission logic here
+    // Navigate to Apply1.js
+    navigate('/apply1');
   };
-  
-  const locationOptions = ['Casablanca', 'Rabat', 'Ifrane', 'Marrakech', 'Agadir'];
-  const professionOptions = ['Electrician', 'Plumber', 'Cleaner'];
-  
+
+  const locationOptions = [
+    'Casablanca', 'Rabat', 'Ifrane', 'Marrakech', 'Agadir', 'Fes', 'Tangier', 
+    'Tetouan', 'Oujda', 'Kenitra', 'Safi', 'El Jadida', 'Nador', 'Beni Mellal', 
+    'Mohammedia', 'Khouribga', 'Ouarzazate', 'Settat', 'Taza', 'Laayoune', 
+    'Errachidia', 'Khemisset', 'Meknes', 'Essaouira', 'Guelmim', 'Tan-Tan', 
+    'Sidi Ifni', 'Zagora', 'Dakhla', 'Boujdour', 'Al Hoceima', 'Taroudant', 
+    'Tiznit', 'Midelt', 'Azrou', 'Chefchaouen', 'Larache', 'Ksar El Kebir', 
+    'Taourirt', 'Berkane', 'Guercif', 'Sidi Slimane', 'Sidi Kacem', 'Youssoufia', 
+    'Chichaoua', 'Ben Guerir', 'Ouazzane', 'Tinghir', 'Boulemane', 'Fquih Ben Salah'
+  ];
+  const professionOptions = [
+    'Electrician', 'Plumber', 'Cleaner', 'Carpenter', 'Painter', 'Mason', 
+    'Gardener', 'AC Technician', 'Welder', 'Mechanic', 'Handyman', 
+    'Roofing Specialist', 'Flooring Specialist', 'Glass Installer', 
+    'Locksmith', 'Pest Control Specialist', 'Home Organizer', 
+    'Interior Designer', 'Landscaper', 'Pool Maintenance Specialist', 
+    'Solar Panel Installer', 'IT Technician', 'Appliance Repair Technician', 
+    'Security System Installer', 'Furniture Assembler', 'Drywall Installer'
+  ];
+
   return (
     <div className="apply-container">
       <Navbar />
@@ -70,15 +89,15 @@ const Apply = () => {
           
           <div className="form-row">
             <div className="form-group">
-            <input
-  type="tel"
-  name="phoneNumber"
-  value={formData.phoneNumber}
-  onChange={handleChange}
-  placeholder="Phone Number"
-  className="form-input phone-input"
-  required
-/>
+              <input
+                type="tel"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                className="form-input phone-input"
+                required
+              />
             </div>
             <div className="form-group">
               <select
@@ -115,7 +134,7 @@ const Apply = () => {
         </form>
         
         <div className="check-status">
-          <p>Already applied? <a href="#check-status">Check your application status here.</a></p>
+          <p>Already applied? <a href="/app-status">Check your application status here.</a></p>
         </div>
       </div>
       
@@ -152,22 +171,19 @@ const Apply = () => {
           "Work when you want. Get paid fast. No chasing clients or payments we handle it all. Sign up now!"
           </p>
           <div className="testimonial-author">
-          <div className="testimonial-author">
-  <img
-    src="/images/ME.jpeg" // Path to the image in the public folder
-    alt="Author"
-    className="author-image"
-    style={{
-      width: "60px",
-      height: "60px",
-      borderRadius: "50%",
-      backgroundColor: "#ddd",
-      marginRight: "15px",
-      objectFit: "cover",
-    }}
-  />
-  
-</div>
+            <img
+              src="/images/ME.jpeg"
+              alt="Author"
+              className="author-image"
+              style={{
+                width: "60px",
+                height: "60px",
+                borderRadius: "50%",
+                backgroundColor: "#ddd",
+                marginRight: "15px",
+                objectFit: "cover",
+              }}
+            />
             <div className="author-info">
               <h4>Imane Ben Zerraouia</h4>
               <p>CEO, AlloM3ellem</p>

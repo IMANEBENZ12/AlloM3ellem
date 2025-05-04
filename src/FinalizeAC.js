@@ -50,6 +50,16 @@ const Finalize = () => {
     const pricePerHour = 100;
     return hourCount * pricePerHour;
   };
+  useEffect(() => {
+    // Retrieve the ZIP code from localStorage and set it in the form data
+    const savedZipCode = localStorage.getItem('zipCode');
+    if (savedZipCode) {
+      setFormData((prev) => ({
+        ...prev,
+        zipCode: savedZipCode
+      }));
+    }
+  }, []);
 
   useEffect(() => {
     const fetchBookingDetails = async () => {

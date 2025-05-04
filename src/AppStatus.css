@@ -1,0 +1,115 @@
+/* Main container styles */
+.app-container {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f0f7fa;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Header styles */
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .angi-logo {
+    height: 40px;
+    width: auto;
+  }
+  
+  .help-link a {
+    color: #888;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+  
+  .help-link a:hover {
+    text-decoration: underline;
+    color: #666;
+  }
+  
+  /* Status content styles */
+  .status-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  .status-card {
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 3rem 2rem;
+    max-width: 700px;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .status-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .check-circle {
+    width: 70px;
+    height: 70px;
+    background-color: #2c12c2;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+  }
+  
+  .check-circle svg {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .status-title {
+    color: #444;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  
+  .status-message {
+    color: #555;
+    font-size: 1.1rem;
+    line-height: 1.5;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .app-header {
+      padding: 1rem;
+    }
+    
+    .status-card {
+      padding: 2rem 1rem;
+    }
+    
+    .status-title {
+      font-size: 1.5rem;
+    }
+    
+    .status-message {
+      font-size: 1rem;
+    }
+  }

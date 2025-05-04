@@ -66,6 +66,16 @@ const Finalize = () => {
     const pricePerHour = 100; // 100 DH per hour
     return hourCount * pricePerHour;
   };
+  useEffect(() => {
+    // Retrieve the ZIP code from localStorage and set it in the form data
+    const savedZipCode = localStorage.getItem('zipCode');
+    if (savedZipCode) {
+      setFormData((prev) => ({
+        ...prev,
+        zipCode: savedZipCode
+      }));
+    }
+  }, []);
 
   // Fetch booking details from the backend
   useEffect(() => {
@@ -94,7 +104,7 @@ const Finalize = () => {
       setIsLoading(true);
       try {
         const serviceType = bookingDetails?.serviceType || 'electrical'; // Default to electrical service
-        const response = await fetch(`http://localhost:5000/api/handymen/match/${formData.zipCode}/${serviceType}`);
+        const response = await fetch(`http://localhost:5000/api/handymen/match/${formData.zipCode}/electrical`);
 
         if (!response.ok) {
           throw new Error(t('loadingHandymen'));

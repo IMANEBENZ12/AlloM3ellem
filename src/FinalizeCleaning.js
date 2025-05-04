@@ -184,6 +184,16 @@ const FinalizeCleaning = () => {
       city: "" // Reset city when region changes
     }));
   };
+  useEffect(() => {
+    // Retrieve the ZIP code from localStorage and set it in the form data
+    const savedZipCode = localStorage.getItem('zipCode');
+    if (savedZipCode) {
+      setFormData((prev) => ({
+        ...prev,
+        zipCode: savedZipCode
+      }));
+    }
+  }, []);
   
   // Handler for city change
   const handleCityChange = (e) => {

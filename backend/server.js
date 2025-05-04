@@ -428,6 +428,58 @@ const seedDatabase = async () => {
         bio: 'Eco-friendly cleaning specialist',
         verified: true
       },
+      {
+        name: 'Mohamed Amrani',
+        phoneNumber: '0662233445',
+        email: 'mohamed.amrani@example.com',
+        rating: 4.7,
+        reviews: 45,
+        skills: ['plumbing'],
+        yearsOfExperience: 6,
+        zipCodes: ['53000', '53015', '53025', '53035', '53045'],
+        city: 'Ifrane',
+        bio: 'Reliable plumber with expertise in pipe repairs and installations.',
+        verified: true
+      },
+      {
+        name: 'Youssef El Fassi',
+        phoneNumber: '0663344556',
+        email: 'youssef.elfassi@example.com',
+        rating: 4.9,
+        reviews: 60,
+        skills: ['plumbing'],
+        yearsOfExperience: 10,
+        zipCodes: ['53000', '53020', '53030', '53040', '53050'],
+        city: 'Ifrane',
+        bio: 'Master plumber with a focus on eco-friendly plumbing solutions.',
+        verified: true
+      },
+      {
+        name: 'Khalid Benjelloun',
+        phoneNumber: '0664455667',
+        email: 'khalid.benjelloun@example.com',
+        rating: 4.6,
+        reviews: 40,
+        skills: ['plumbing'],
+        yearsOfExperience: 5,
+        zipCodes: ['53000', '53010', '53020', '53030', '53040'],
+        city: 'Ifrane',
+        bio: 'Specialist in water heater installations and maintenance.',
+        verified: true
+      },
+      {
+        name: 'Ahmed Tazi',
+        phoneNumber: '0665566778',
+        email: 'ahmed.tazi@example.com',
+        rating: 4.7,
+        reviews: 55,
+        skills: ['plumbing'],
+        yearsOfExperience: 7,
+        zipCodes: ['53000', '53015', '53025', '53035', '53045'],
+        city: 'Ifrane',
+        bio: 'Expert in leak detection and pipe replacement services.',
+        verified: true
+      }
     ];
     await Handyman.insertMany(handymen);
     console.log('Sample handymen inserted');
